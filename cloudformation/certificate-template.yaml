@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  DomainName:
+    Type: String
+    Description: The domain name for which to create the certificate
+Resources:
+  ACMCertificate:
+    Type: 'AWS::CertificateManager::Certificate'
+    Properties:
+      DomainName: !Ref DomainName
+      ValidationMethod: DNS
+      SubjectAlternativeNames:
+        - !Ref DomainName
+        - 'Fn::Join':
+            - ''
+            - - 'www.'
+              - !Ref DomainName
+        - 'Fn::Join':
+            - ''
+            - - 'media.'
+              - !Ref DomainName
+        - 'Fn::Join':
+            - ''
+            - - 'user.'
+              - !Ref DomainName
+Outputs:
+  CertificateArn:
+    Description: The ARN of the created ACM certificate
+    Value: !Ref ACMCertificate
