@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.bidbinding</groupId>
+    <artifactId>bidbinding-auction</artifactId>
+    <version>0.1</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>engine-core</module>
+        <module>engine-adapter</module>
+        <module>engine-infrastructure</module>
+    </modules>
+
+    <repositories>
+        <repository>
+            <id>my-internal-repo</id>
+            <url>file:///Users/${env.USER}/.m2/repository</url>
+        </repository>
+        <repository>
+            <id>remote-repo</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+    </repositories>
+
+
+    <properties>
+        <jdk.version>17</jdk.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <skip.integration.tests>true</skip.integration.tests>
+        <version.lombok>1.18.28</version.lombok>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.github.jntakpe</groupId>
+            <artifactId>mongo-reactor-adapter</artifactId>
+            <version>0.3.2</version>
+        </dependency>
+    </dependencies>
+
+
+</project>
