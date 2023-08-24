@@ -4,12 +4,16 @@ Parameters:
   AuthName:
     Type: String
     Description: Unique Auth Name for Cognito Resources
+  DomainName:
+    Type: String
+    Description: Domain name to generate Cognito configuration
 
 Resources:
   # Creates a role that allows Cognito to send SNS messages
   SNSRole:
     Type: "AWS::IAM::Role"
     Properties:
+      RoleName: !Sub ${AuthName}CognitoSnsRole
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -80,7 +84,38 @@ Resources:
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
       ClientName: !Sub ${AuthName}-client
+      AllowedOAuthFlowsUserPoolClient: true
       GenerateSecret: false
+      UserPoolId: !Ref UserPool
+      CallbackURLs:
+        - !Sub https://${DomainName}
+      SupportedIdentityProviders:
+        - COGNITO
+      AllowedOAuthScopes:
+        - openid
+        - email
+        - phone
+      AllowedOAuthFlows:
+        - code
+
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: !Sub ${AuthName}
+      UserPoolId: !Ref UserPool
+
+  UserPoolAdminGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      Description: admin group
+      GroupName: Admin
+      UserPoolId: !Ref UserPool
+
+  UserPoolRegularGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      Description: general group
+      GroupName: General
       UserPoolId: !Ref UserPool
 
   # Creates a federeated Identity pool
@@ -97,6 +132,7 @@ Resources:
   CognitoUnAuthorizedRole:
     Type: "AWS::IAM::Role"
     Properties:
+      RoleName: !Sub ${AuthName}CognitoUnauthorizedRole
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -126,6 +162,7 @@ Resources:
   CognitoAuthorizedRole:
     Type: "AWS::IAM::Role"
     Properties:
+      RoleName: !Sub ${AuthName}CognitoAuthorizedRole
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -177,3 +214,7 @@ Outputs:
     Value: !Ref IdentityPool
     Export:
       Name: "IdentityPool::Id"
+  authUrl:
+    Value: !Sub https://${AuthName}.auth.us-east-1.amazoncognito.com/login?response_type=code&client_id=${UserPoolClient}&redirect_uri=https://${DomainName}
+    Export:
+      Name: "Auth::URL"

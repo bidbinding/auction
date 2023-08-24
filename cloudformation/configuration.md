@@ -12,6 +12,6 @@ Replace the value of yourdomain.com with the actual domain
 
 Execute the following command
 
-```agsl
-aws cloudformation create-stack --stack-name CognitoSESSignupStack --template-body file://cognito-template.yaml --parameters ParameterKey=AuthName,ParameterValue=bidbinding --capabilities CAPABILITY_IAM
+```
+aws cloudformation create-stack --stack-name CognitoSESSignupStack --template-body file://cognito-template.yaml --parameters ParameterKey=AuthName,ParameterValue=cognitouserpoolname ParameterKey=DomainName,ParameterValue=yourdomain.com --capabilities CAPABILITY_IAM
 ```
