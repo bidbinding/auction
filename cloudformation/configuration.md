@@ -7,3 +7,11 @@ aws cloudformation create-stack --stack-name CertificateStack --template-body fi
 ```
 
 Replace the value of yourdomain.com with the actual domain
+
+## Configure Cognito
+
+Execute the following command
+
+```agsl
+aws cloudformation create-stack --stack-name CognitoSESSignupStack --template-body file://cognito-template.yaml --parameters ParameterKey=AuthName,ParameterValue=bidbinding --capabilities CAPABILITY_IAM
+```
