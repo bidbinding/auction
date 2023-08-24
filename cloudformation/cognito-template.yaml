@@ -4,6 +4,9 @@ Parameters:
   AuthName:
     Type: String
     Description: Unique Auth Name for Cognito Resources
+  DomainName:
+    Type: String
+    Description: Domain name to generate Cognito configuration
 
 Resources:
   # Creates a role that allows Cognito to send SNS messages
@@ -81,6 +84,37 @@ Resources:
     Properties:
       ClientName: !Sub ${AuthName}-client
       GenerateSecret: false
+      UserPoolId: !Ref UserPool
+      CallbackURLs:
+        - !Sub https://${DomainName}
+      SupportedIdentityProviders:
+        - COGNITO
+      AllowedOAuthScopes:
+        - openid
+        - email
+        - phone
+        - profile
+      AllowedOAuthFlows:
+        - code
+
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: !Sub ${AuthName}
+      UserPoolId: !Ref UserPool
+
+  UserPoolAdminGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      Description: admin group
+      GroupName: Admin
+      UserPoolId: !Ref UserPool
+
+  UserPoolRegularGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      Description: general group
+      GroupName: General
       UserPoolId: !Ref UserPool
 
   # Creates a federeated Identity pool
